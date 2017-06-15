@@ -7,17 +7,19 @@
  int tam= (ancho+alto/2)/300;
  ArrayList<Disparo> balas = new ArrayList<Disparo>();
  ArrayList<Alien> alienigenas = new ArrayList<Alien>();
+ ArrayList<DisparoAlien> tiros = new ArrayList<DisparoAlien>();
  int orientacion=1;
  int fall=0;
  PImage fondo;
  PImage boton;
  int pantalla = 0;
+ int score = 0;
+ int limite= 0;
 void setup ()
 {
   size(600,600);
   background(0);
   fill(255);
- // disparos(x,y-tam*6);
   fondo = loadImage("fondo.jpg");
   boton = loadImage("gameButton.png");
  generarAliens();
@@ -31,15 +33,15 @@ void setup ()
      nave();
      movimientoNave();
      dibujarBalas();
-     
+     score();
+     dibujarTiros();
      for (Alien a : alienigenas){
        if(a.estaVivo){
          a.dibujarAlien();
          a.moveAlien();
        }
      }
-   }
-   
+   }   
  }
  
  void pantallaInicial(){
@@ -48,7 +50,7 @@ void setup ()
   int anchoboton = int(width*0.4);
   int altoboton = int(height*0.13);
   
-  boolean inButton = mouseX>=(width/2-anchoboton/2) && mouseX<=(width/2+anchoboton) && mouseY >= height/2+tam*4-altoboton/2 && mouseY <= height/2+tam*4+altoboton;
+  boolean inButton = mouseX>=(width/2-anchoboton/2) && mouseX<=(width/2+(anchoboton/2)) && mouseY >= height/2+tam*4-altoboton/2 && mouseY <= height/2+tam*4+altoboton/2;
   if(inButton){
     anchoboton = int(width*0.47);
     altoboton = int(height*0.15);
@@ -59,16 +61,16 @@ void setup ()
   image(boton, width/2-anchoboton/2,height/2+tam*4-altoboton/2,anchoboton,altoboton);
 }
  
- void keyPressed(){ // Se Activa Cuando se presiona una tecla
+ void keyPressed(){
     //println("" + keyCode);//  PARA VER LOS CODIGOS DE LAS TECLAS
-   if (keyCode == 39 || keyCode == 68) // Si se presiona la tecla DERECHA o D
+   if (keyCode == 39 || keyCode == 68) // tecla DERECHA o D
    {
      derecha= true; 
    }
-   if (keyCode == 37 || keyCode == 65){// Si se presiona la tecla IZQUIERDA o A   
+   if (keyCode == 37 || keyCode == 65){// tecla IZQUIERDA o A   
      izquierda = true;
    }
-   if (keyCode == 32){// Si se presiona la barra espaciadora  
+   if (keyCode == 32){// barra espaciadora  
      if(balas.size()<3){
        Disparo aux = new Disparo(x,y);
        balas.add(aux);
@@ -76,7 +78,7 @@ void setup ()
    }
  }
  
- void keyReleased() // El Void KeyReleased se activa cuando se suelta una tecla
+ void keyReleased()
  {
    if (keyCode == 39 || keyCode == 68){
      derecha= false;
@@ -135,154 +137,30 @@ void setup ()
   rect(x-tam*6,y+tam*4,tam,tam);
   rect(x+tam*6,y+tam*4,tam,tam);
  }
-
-void generarAliens(){
-  int xInicial = int(width*0.1);
-  int yInicial = int(height*0.2);
-  
-  int fila = 0;
-  while(fila<3){
-    for(int i=0;i<8;i++){
-      Alien generado = new Alien(xInicial+i*2*(tam*10),yInicial+(fila*(tam*15)));
-      alienigenas.add(generado);
-    }
-    fila++;
+  void score(){
+    fill(255);
+    textSize(32);
+    text(score, 10, 30);
   }
-  
-}
-
-void dibujarBalas(){
-  for (int bal = 0; bal<balas.size(); bal++ ){
-     Disparo balaActual = balas.get(bal);
-     if(balaActual.salio()){
-       balas.remove(bal);
-     } else {
-       balaActual.avanzeBala();
-       balaActual.hacerBala();
-     }
-   }
-}
-
-class Disparo{
-    int xshot=0;
-    int yshot=0;
-    Disparo(int xball, int yball){
-      xshot=xball;
-      yshot=yball;
+  class DisparoAlien{
+    int tirox=0;
+    int tiroy=0;
+    DisparoAlien(int xtiro, int ytiro){
+      tirox=xtiro;
+      tiroy=ytiro;
     }
-    void hacerBala(){
-      fill(0,255,0);
-      stroke(0,255,0);
-      line(xshot,yshot-tam*6,xshot,yshot);
+    void hacerTiro(){
+      fill(255,0,0);
+      stroke(255,0,0);
+      rect(tirox,tiroy+fall,tam,tam*3);
     }
-    void avanzeBala(){
-      boolean colisiona = false;
-      
-      for(int a = 0; a<alienigenas.size(); a++){
-        Alien alienActual = alienigenas.get(a);
-        if(alienActual.colisiona(xshot,yshot-tam*6)){
-          colisiona = true;
-          alienigenas.remove(a);
-          break; //Deja de evaluar porque sabemos que colisionó con esta bala
-        }
-      }
-      
-      if(colisiona){
-        yshot = -1;
-      } else{
-        yshot= yshot-4;
-      }
+    void avanzeTiro(){
+      tiroy=tiroy+3;
     }
-    boolean salio(){
-      if (yshot<0){
+    Boolean sale(){
+      if (tiroy>height){
         return true;
       }
-      return false;
-    }
-}
-
-class Alien{
-    int posx = 0;
-    int posy = 0;
-    boolean puedeDisparar = false;
-    boolean estaVivo = true;
-    float anchoAlien = tam*9;
-    float altoAlien = tam*10;
-    Alien(int xball, int yball){
-      posx=xball;
-      posy=yball;
-      
-      //Aqui define si el alien puede o no disparar. 
-      if(random(50)>40){
-        puedeDisparar = true;
-      }
-      
-    }
-    void dibujarAlien(){
-      //Si no está vivo no lo imprimimos
-      if(!estaVivo){
-        return;
-      }
-      //dibuja el alien..
-        noStroke();
-        fill(255,255,0);//color amarillo
-        rect(posx,posy+fall,tam,tam*5);
-        rect(posx-tam*2,posy+tam+fall,tam,tam);
-        rect(posx+tam*2,posy+tam+fall,tam,tam);
-        rect(posx-tam*2,posy+tam*3+fall,tam*5,tam);
-        rect(posx-tam,posy+tam*4+fall,tam*3,tam);
-        rect(posx-tam,posy+tam*7+fall,tam*3,tam);
-        fill(255,0,0);//color rojo
-        rect(posx-tam,posy+tam+fall,tam,tam*2);
-        rect(posx+tam,posy+tam+fall,tam,tam*2);
-        rect(posx-tam*2,posy+tam*2+fall,tam*2,tam);
-        rect(posx+tam*2,posy+tam*2+fall,tam,tam);
-        rect(posx-tam,posy+tam*5+fall,tam*3,tam*2);
-        rect(posx-tam,posy+tam*8+fall,tam*3,tam);
-        rect(posx,posy+tam*9+fall,tam,tam);
-        if(puedeDisparar){
-          fill(150,0,255);//color violeta
-        } else {
-          fill(0,0,255);//color azul
-        }
-        rect(posx-tam*4,posy+fall,tam,tam*2);
-        rect(posx+tam*4,posy+fall,tam,tam*2);
-        rect(posx-tam*3,posy+tam*2+fall,tam,tam);
-        rect(posx+tam*3,posy+tam*2+fall,tam,tam);
-        rect(posx-tam*4,posy+tam*5+fall,tam*2,tam*5);
-        rect(posx+tam*3,posy+tam*5+fall,tam*2,tam*5);
-        rect(posx-tam*4,posy+tam*5+fall,tam*2,tam*5);
-        rect(posx-tam*3,posy+tam*4+fall,tam*2,tam*2);
-        rect(posx+tam*2,posy+tam*4+fall,tam*2,tam*2);
-  
-      //Si puede disparar, genera un disparo
-      if(puedeDisparar){
-        this.dispararBala();
-      }
-    }
-    
-    void moveAlien(){
-      posx=posx+orientacion;
-      if (posx+tam*9>width||posx-tam*9<0){
-        orientacion=orientacion*-1;
-        fall=fall+tam*2;
-      }
-    }
-    
-    boolean colisiona(int xbala, int ybala){
-      if (posx-tam*4<=xbala && posx+tam*4>=xbala && posy-tam*5<=ybala && posy+tam*10>=ybala){
-        return true;
-      }        
-      return false;
-    }
-    
-    void matar(){
-      estaVivo = false;
-    }
-    
-    void dispararBala(){
-      if (random(50)>45){
-        //aqui dispara una bala.
-      }
-    }
+      return false; 
+  }
   }
