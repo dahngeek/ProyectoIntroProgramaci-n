@@ -1,4 +1,4 @@
-void dibujarBalas(){
+ void dibujarBalas(){
   for (int bal = 0; bal<balas.size(); bal++ ){
      Disparo balaActual = balas.get(bal);
      if(balaActual.salio()){

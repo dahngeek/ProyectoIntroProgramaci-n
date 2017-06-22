@@ -1,19 +1,3 @@
-void generarAliens(){
-  int xInicial = int(width*0.1);
-  int yInicial = int(height*0.2);
-  float maldadBatallon = 0.05;
-  int fila = 0;
-  while(fila<4){
-    for(int i=0;i<8;i++){
-      Alien generado = new Alien(xInicial+i*2*(tam*10),yInicial+(fila*(tam*15)),maldadBatallon);
-      alienigenas.add(generado);
-    }
-    fila++;
-  }
-  
-}
-
-
 class Alien{
   int posx = 0;
   int posy = 0;
@@ -80,6 +64,9 @@ class Alien{
     if (posx+tam*9>width||posx-tam*9<0){
       orientacion=orientacion*-1;
       fall=fall+tam*2;
+    }
+    if (posy+fall>(0.85*height)){
+      pantalla = 2;
     }
   }
   

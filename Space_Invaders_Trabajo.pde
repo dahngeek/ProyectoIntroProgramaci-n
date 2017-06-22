@@ -16,7 +16,8 @@
  int score = 0;
  int limite= 0;
  int golpes=0;
- int mitad = 30;
+ GameController juego = new GameController(); 
+ 
  
 void setup ()
 {
@@ -25,7 +26,7 @@ void setup ()
   fill(255);
   fondo = loadImage("fondo.jpg");
   boton = loadImage("gameButton.png");
-  generarAliens();
+  juego.generarAliens();
   
 }
 
@@ -34,7 +35,9 @@ void setup ()
      pantallaInicial();
    } else if(pantalla==1){
      pantallaDeJuego();
-   }   
+   } else if(pantalla==2){
+     pantallaFinal();  
+   }
  }
 
 void pantallaInicial(){
@@ -70,21 +73,14 @@ void pantallaInicial(){
 }
 
 void pantallaDeJuego(){
-  if(alienigenas.size()<mitad){
-      orientacion = orientacion*2;
-      mitad = (int)mitad/4;
-   }
+   juego.revisarJuego();
    //Las Funciones no necesitan descripcion haha.
    background(0);
-   for(int i =0; i<usuarios.size();i++){
-     NaveUsuario naveActual = usuarios.get(i);
-     naveActual.recibirTeclas();
-     naveActual.dibujar();
-   }
+   juego.imprimirUsuarios();
    //movimientoNave();
    dibujarBalas();
    score();
-   golpes();
+   //golpes();
    dibujarTiros();
    for (Alien a : alienigenas){
      if(a.estaVivo){
@@ -94,6 +90,12 @@ void pantallaDeJuego(){
    }
 }
 
+void pantallaFinal(){
+   background (0);
+   fill(255);
+   textSize(64);
+   text(score, width/3, height/2);
+ }
  
  void keyReleased()
  {
@@ -119,8 +121,8 @@ void pantallaDeJuego(){
     text(score, 10, 30);
   }
   
-  void golpes(){
-    fill(255);
-    textSize(32);
-    text(golpes, 400, 30);
-  }
+  //void golpes(){
+  //  fill(255);
+  //  textSize(32);
+  //  text(golpes, 400, 30);
+  //}
