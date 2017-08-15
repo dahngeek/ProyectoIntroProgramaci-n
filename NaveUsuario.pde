@@ -58,7 +58,7 @@ final class NaveUsuario {
   void dibujarVidas(int index){
     int vida = salud;
     int numeroDeCorazon = 0;
-    dibujar((int)(0.95*width),(int)((0.05*height)+(tam*5)+(tam*20*index)));
+    dibujar((int)(0.95*width),(int)((0.05*height)+(tam*8)+(tam*20*index)));
     while(vida > 0){
       if(vida>1){
         dibujaCorazon((int)((0.85*width)-(numeroDeCorazon*(tam*15))),(int)((0.05*height)+(tam*20*index)), false);
@@ -72,7 +72,8 @@ final class NaveUsuario {
   }
   
   void dibujaCorazon(int x, int y, boolean par){
-    int tam = 2;
+    //int ttt = tam;
+    //int tam = ttt-1;
     noStroke();
     fill(255,255,255);
     rect(x+tam,y-tam,tam,tam*3);

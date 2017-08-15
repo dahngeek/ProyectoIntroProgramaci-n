@@ -1,9 +1,10 @@
- int ancho=600;
- int alto= 600;
+ int ancho;
+ int alto;
+ int tam;
  
+ PFont gover;
  boolean derecha = false;
  boolean izquierda = false;
- int tam= (ancho+alto/2)/300;
  ArrayList<Disparo> balas = new ArrayList<Disparo>();
  ArrayList<Alien> alienigenas = new ArrayList<Alien>();
  ArrayList<DisparoAlien> tiros = new ArrayList<DisparoAlien>();
@@ -11,9 +12,10 @@
  int orientacion=1;
  int fall=0;
  PImage fondo;
+ PImage gameover;
  PImage boton;
  int pantalla = 0;
- int score = 0;
+ int score = 1900;
  int limite= 0;
  int golpes=0;
  GameController juego = new GameController(); 
@@ -21,13 +23,19 @@
  
 void setup ()
 {
-  size(600,600);
+  size(700,700);
+  tam=(width+height/2)/300;
+  ancho=width;
+  alto= height;
+  //fullScreen();
   background(0);
   fill(255);
   fondo = loadImage("fondo.jpg");
   boton = loadImage("gameButton.png");
+  gameover = loadImage("gameover.jpg");
   juego.generarAliens();
-  
+  gover = createFont("Gameplay.ttf",72);
+  textFont(gover);
 }
 
  void draw(){
@@ -42,7 +50,12 @@ void setup ()
 
 void pantallaInicial(){
   background(0);
-  image(fondo, 0, 0,width,height);
+  if(width>600 && height>600){
+    image(fondo, (int)((width/2)-300),(int)((height/2)-300),600,600);
+  } else {
+    image(fondo, 0,0,width,height);
+  }
+  
   int anchoboton = int(width*0.4);
   int altoboton = int(height*0.13);
   
@@ -91,10 +104,28 @@ void pantallaDeJuego(){
 }
 
 void pantallaFinal(){
-   background (0);
+   background(0);
+    if(width>600 && height>600){
+      image(gameover, (int)((width/2)-300),(int)((height/2)-300),600,600);
+    } else {
+      image(gameover, 0,0,width,height);
+    }
    fill(255);
-   textSize(64);
-   text(score, width/3, height/2);
+   textSize(72);
+   if(score<9){
+     text(score, width*0.45, height*0.70);
+   } else if(score<99){
+     text(score, width*0.38, height*0.70);
+   }
+   else if(score<990){
+     text(score, width*0.36, height*0.70);
+   } else {
+     text(score, width*0.34, height*0.70);
+   }
+   
+   if (keyPressed){
+     pantalla=0;
+   }
  }
  
  void keyReleased()
@@ -118,7 +149,7 @@ void pantallaFinal(){
   void score(){
     fill(255);
     textSize(32);
-    text(score, 10, 30);
+    text(score, 20, 60);
   }
   
   //void golpes(){

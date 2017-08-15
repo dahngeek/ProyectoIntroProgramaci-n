@@ -1,5 +1,5 @@
 class GameController {
-  float maldadInicial = 0.1;
+  float maldadInicial = 0.2;
   int level = 1;
   int mitad = 30;
   
